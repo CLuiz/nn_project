@@ -17,15 +17,16 @@ class ModIterator(object):
         self.test_set = test_set
         self.sample_size = sample_size
 
-    def load_data(self):
+    def load_data(self, data_dir):
         """Load data """
+        for item in data_dir:
 
     def fit(self, mod, X_train, y_train):
         """Fit model"""
 
     def evaluate(self, mod, X_test, y_test):
         """Evaluate model on test set"""
-
+        return mod.evaluate(X_test, y_test)
 
 def main():
     """main functionality"""
