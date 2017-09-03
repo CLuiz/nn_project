@@ -2,6 +2,7 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 from torch.autograd import Variable
+import torch.optim as optim
 import torch.nn as nn
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
@@ -65,3 +66,32 @@ class Net(nn.Module):
 
 
 net = Net()
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+
+for epoch in range(2):
+    running_loss = 0.0
+    for i, data, in enumerate(trainloader, 0):
+        # get inputs
+        inputs, labels = data
+        # wrap inputs in variable
+        inputs, labels = Variable(inputs), Variable(labels)
+        # zero parameter gradients
+        optimizer.zero_grad()
+
+        # forward + backward optimize
+        outputs = net(inputs)
+        loss = criterion(outputs, labels)
+        loss.backword()
+        optimizer.step()
+
+        # print stats
+        running_loss += loss.data[0]
+        if i % 2000 == 1999:
+            print('[%d, %5d] loss: %.3f' % (epoch + 1,
+                                            i + 1,
+                                            running_loss / 2000))
+            running_loss = 0.0
+
+print('Finished Training!')
