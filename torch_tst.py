@@ -95,3 +95,19 @@ for epoch in range(2):
             running_loss = 0.0
 
 print('Finished Training!')
+
+outputs = net(Variable(images))
+
+_, predicted = torch.max(outputs.data, 1)
+print('Predicted: ', ' '.join('%5s' % classes[predicted[j]]
+                              for j in range(4)))
+
+correct = 0
+total = 0
+for data in testloader:
+    images, labels = data
+    outputs = net(Variable(images))
+    _, predicted = torch.max(outputs.data, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum()
+    
