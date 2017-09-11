@@ -137,9 +137,9 @@ def main():
         print('Accuracy of %5s : %2d %%' % (
             classes[i], 100 * class_correct[i] / class_total[i]))
 
-    #net.cuda()
+    # net.cuda()
+    # inputs, labels = Variable(inputs.cuda()), Variable(labels.cuda())
 
-    #inputs, labels = Variable(inputs.cuda()), Variable(labels.cuda())
 
 if __name__ == '__main__':
     main()
