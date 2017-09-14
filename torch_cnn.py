@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from torch.autograd import Variable
 
-from data_util import mnist
+from data_util import load_mnist
 
 
 class ConvNet(torch.nn.Module):
@@ -33,7 +33,7 @@ class ConvNet(torch.nn.Module):
 
 def train(model, loss, optimizer, x_val, y_val):
     x = Variable(x_val, require_grad=False)
-    y = Variable(v_val, require_grad=False)
+    y = Variable(y_val, require_grad=False)
 
     # Reset gradient
     optimizer.zero_grad()
@@ -49,11 +49,39 @@ def train(model, loss, optimizer, x_val, y_val):
 
 
 def predict(model, x_val):
-    pass
+    x = Variable(x_val, requires_grad=False)
+    output = model.forward(x)
+    return output.data.numpy().argmax(axis=1)
 
 
 def main():
-    pass
+    torch.manual_seed(42)
+    trX, teX, trY, teY = load_mnist(onehot=False)
+    trX = trX.reshape(-1, 1, 28, 28)
+    teX = teX.reshape(-1, 1, 28, 28)
+
+    trX = torch.from_numpy(trX).float()
+    teX = torch.from_numpy(teX).float()
+    trY = torch.from_numpy(trY).long()
+
+    n_examples = len(trX)
+    n_classes = 10
+    model = ConvNet(output_dim=n_classes)
+    loss = torch.nn.CrossEntropyLoss(size_average=True)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+    batch_size = 100
+
+    for i in range(20):
+        cost = 0.0
+        num_batches = n_examples // batch_size
+        for k in range(num_batches):
+            start, end = k * batch_size, (k + 1) * batch_size
+            cost += train(model, loss, optimizer,
+                          trX[start:end, trY[start:end]])
+        predY = predict(model, teX)
+        print('Epoch %d, cost= %f, acc = %.2f%%' % (
+                                    i + 1, cost / num_batches,
+                                    100. * np.mean(predY == teY)))
 
 
 if __name__ == '__main__':
