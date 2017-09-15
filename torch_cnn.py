@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from torch.autograd import Variable
 
-from data_util import load_mnist
+from data_utils import load_mnist
 
 
 class ConvNet(torch.nn.Module):
@@ -13,7 +13,7 @@ class ConvNet(torch.nn.Module):
         self.conv = torch.nn.Sequential()
         self.conv.add_module('conv_1', torch.nn.Conv2d(1, 10, kernel_size=5))
         self.conv.add_module('maxpool_1', torch.nn.MaxPool2d(kernel_size=2))
-        self.conv.add_module('relu_1', torch.nn.Relu())
+        self.conv.add_module('relu_1', torch.nn.ReLU())
         self.conv.add_module('conv_2', torch.nn.Conv2d(10, 20, kernel_size=5))
         self.conv.add_module('dropout_2', torch.nn.Dropout())
         self.conv.add_module('maxpool_2', torch.nn.MaxPool2d(kernel_size=2))
@@ -32,8 +32,8 @@ class ConvNet(torch.nn.Module):
 
 
 def train(model, loss, optimizer, x_val, y_val):
-    x = Variable(x_val, require_grad=False)
-    y = Variable(y_val, require_grad=False)
+    x = Variable(x_val, requires_grad=False)
+    y = Variable(y_val, requires_grad=False)
 
     # Reset gradient
     optimizer.zero_grad()
@@ -68,7 +68,7 @@ def main():
     n_classes = 10
     model = ConvNet(output_dim=n_classes)
     loss = torch.nn.CrossEntropyLoss(size_average=True)
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
     batch_size = 100
 
     for i in range(20):
@@ -76,8 +76,8 @@ def main():
         num_batches = n_examples // batch_size
         for k in range(num_batches):
             start, end = k * batch_size, (k + 1) * batch_size
-            cost += train(model, loss, optimizer,
-                          trX[start:end, trY[start:end]])
+            cost += train(model, loss, optimizer, trX[start:end],
+                          trY[start:end])
         predY = predict(model, teX)
         print('Epoch %d, cost= %f, acc = %.2f%%' % (
                                     i + 1, cost / num_batches,
