@@ -68,7 +68,7 @@ def main():
     n_classes = 10
     model = ConvNet(output_dim=n_classes)
     loss = torch.nn.CrossEntropyLoss(size_average=True)
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
     batch_size = 100
 
     for i in range(20):
